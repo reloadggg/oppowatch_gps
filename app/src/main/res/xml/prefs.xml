@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="sampling_interval"
+        android:title="采样间隔 (ms)"
+        android:defaultValue="1000" />
+    <EditTextPreference
+        android:key="speed_threshold"
+        android:title="速度触发阈值 (m/s)"
+        android:defaultValue="1.0" />
+    <EditTextPreference
+        android:key="cooldown"
+        android:title="冷却时间 (s)"
+        android:defaultValue="5" />
+    <EditTextPreference
+        android:key="auto_pause"
+        android:title="自动暂停阈值 (km/h)"
+        android:defaultValue="5" />
+    <ListPreference
+        android:key="export_format"
+        android:title="导出格式"
+        android:entries="@array/export_format_entries"
+        android:entryValues="@array/export_format_values"
+        android:defaultValue="both" />
+    <ListPreference
+        android:key="unit"
+        android:title="速度单位"
+        android:entries="@array/unit_entries"
+        android:entryValues="@array/unit_values"
+        android:defaultValue="kmh" />
+    <SwitchPreferenceCompat
+        android:key="vibration"
+        android:title="震动反馈"
+        android:defaultValue="true" />
+</PreferenceScreen>

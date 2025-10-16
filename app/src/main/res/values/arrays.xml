@@ -1,0 +1,20 @@
+<resources>
+    <string-array name="export_format_entries">
+        <item>GPX</item>
+        <item>CSV</item>
+        <item>GPX + CSV</item>
+    </string-array>
+    <string-array name="export_format_values">
+        <item>gpx</item>
+        <item>csv</item>
+        <item>both</item>
+    </string-array>
+    <string-array name="unit_entries">
+        <item>km/h</item>
+        <item>mph</item>
+    </string-array>
+    <string-array name="unit_values">
+        <item>kmh</item>
+        <item>mph</item>
+    </string-array>
+</resources>
