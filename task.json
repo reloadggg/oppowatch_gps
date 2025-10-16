@@ -1,0 +1,143 @@
+{
+  "project": {
+    "name": "KartLap-SE",
+    "objective": "在 OPPO Watch SE 上实现离线圈速记录应用，使用标准 Android 接口完成后台稳定的 GPS 记录、实时轨迹绘制与数据导出。",
+    "principles": [
+      "不依赖 ColorOS 私有接口或流体云",
+      "仅使用标准 Android API（LocationManager, SensorManager, PowerManager 等）",
+      "在熄屏和无网络环境下保持记录不中断",
+      "所有持久化与导出均离线执行",
+      "UI 极简、手表友好（触控 + 震动反馈）"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "前台服务持续定位",
+      "description": "创建 ForegroundService 作为核心后台任务，维持高优先级进程。通知类别设置为 CATEGORY_WORKOUT 或 CATEGORY_NAVIGATION，并展示实时记录状态。",
+      "outputs": [
+        "app/src/main/java/.../RecordService.kt",
+        "app/src/main/res/xml/notification_channel.xml"
+      ],
+      "acceptance": "服务在熄屏后持续运行 ≥30 分钟，通知常驻且可交互。"
+    },
+    {
+      "id": "T2",
+      "title": "CPU 唤醒保持",
+      "description": "使用 PARTIAL_WAKE_LOCK 保持 CPU 在熄屏后继续工作，采用定时续期方式防止资源泄漏。确保在 onDestroy() 时正确释放。",
+      "outputs": [
+        "app/src/main/java/.../WakeLockManager.kt"
+      ],
+      "acceptance": "CPU 在熄屏状态下仍有稳定 GPS 回调，唤醒锁使用时间受控。"
+    },
+    {
+      "id": "T3",
+      "title": "电池优化豁免与用户引导",
+      "description": "检测并引导用户授权 ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS。针对 ColorOS 提供一键跳转与图示提示。",
+      "outputs": [
+        "app/src/main/java/.../BatteryOptimizationHelper.kt",
+        "app/src/main/res/layout/battery_prompt.xml"
+      ],
+      "acceptance": "首次启动时可正确检测状态，用户授权后后台进程不被回收。"
+    },
+    {
+      "id": "T4",
+      "title": "心跳与服务自恢复机制",
+      "description": "使用 AlarmManager.setAndAllowWhileIdle() 定期发送心跳广播（10 分钟间隔），检测定位流是否活跃。Service 返回 START_STICKY，结合心跳可在被杀后自动恢复。",
+      "outputs": [
+        "app/src/main/java/.../HeartbeatReceiver.kt",
+        "app/src/main/java/.../AlarmManagerHelper.kt"
+      ],
+      "acceptance": "系统回收后 ≤10 分钟内可自动重启服务并恢复记录。"
+    },
+    {
+      "id": "T5",
+      "title": "运动传感器唤醒策略",
+      "description": "注册加速度计与陀螺仪监听器，让系统识别为运动场景以提高进程优先级。在设备运动时主动刷新 GPS 请求，静止时降低频率节能。",
+      "outputs": [
+        "app/src/main/java/.../MotionSensorManager.kt"
+      ],
+      "acceptance": "检测到运动可及时唤醒记录，静止时电量消耗≤10mA。"
+    },
+    {
+      "id": "T6",
+      "title": "GPS 数据原子写入",
+      "description": "轨迹点数据写入采用 AtomicFile 机制，防止中途崩溃导致文件损坏。周期性 flush 到临时文件并在完成后替换正式文件。",
+      "outputs": [
+        "app/src/main/java/.../TrackWriter.kt",
+        "app/src/main/java/.../AtomicFileUtils.kt"
+      ],
+      "acceptance": "强制退出后轨迹文件完整可读，无空文件或截断错误。"
+    },
+    {
+      "id": "T7",
+      "title": "断点续写与日志完整性",
+      "description": "应用启动时检查未完成会话，自动续写或标记 incomplete。文件尾部添加完整性标记（EOF/checksum）。",
+      "outputs": [
+        "app/src/main/java/.../TrackSessionManager.kt"
+      ],
+      "acceptance": "多次中断后轨迹能自动续写，导出文件带完整标记。"
+    },
+    {
+      "id": "T8",
+      "title": "数据导出功能",
+      "description": "支持 GPX 1.1 与 CSV 双格式导出，文件命名含日期与会话编号。导出采用原子写保护，支持 partial 文件恢复。",
+      "outputs": [
+        "app/src/main/java/.../ExportManager.kt",
+        "app/src/main/java/.../gpx/GPXExporter.kt",
+        "app/src/main/java/.../csv/CSVExporter.kt"
+      ],
+      "acceptance": "导出文件可被 Dashware/RaceChrono 成功解析，时间轴正确。"
+    },
+    {
+      "id": "T9",
+      "title": "用户后台权限设置向导",
+      "description": "在应用设置页提供后台运行和电池优化豁免检测状态展示。针对 MIUI、EMUI、ColorOS 提供跳转或图示指引。",
+      "outputs": [
+        "app/src/main/java/.../SettingsGuide.kt",
+        "app/src/main/res/layout/permissions_guide.xml"
+      ],
+      "acceptance": "用户能按提示完成设置，后台运行成功率提升≥80%。"
+    },
+    {
+      "id": "T10",
+      "title": "多场景稳定性测试",
+      "description": "执行息屏 30 分钟、系统杀进程、断电重启、空间不足等测试，记录轨迹丢失率、服务恢复时延。",
+      "outputs": [
+        "docs/stability_test_report.md"
+      ],
+      "acceptance": "轨迹丢失率≤2%，导出成功率≥95%。"
+    },
+    {
+      "id": "UI1",
+      "title": "主界面：开始 / 结束 / 保存",
+      "description": "设计极简主界面：一个大按钮用于“开始/结束”切换；结束后提示“保存文件（GPX/CSV）”。显示当前状态与基本统计（时长、圈数、最佳圈）。",
+      "outputs": [
+        "app/src/main/res/layout/activity_main.xml",
+        "app/src/main/java/.../MainActivity.kt",
+        "app/src/main/res/values/strings.xml"
+      ],
+      "acceptance": "手表屏幕上操作不误触；按钮状态清晰；结束后能一键保存文件并显示保存路径。"
+    },
+    {
+      "id": "UI2",
+      "title": "实时轨迹绘制（离线，无底图）",
+      "description": "实现自绘 Canvas 轨迹渲染：将经纬度投影到本地坐标（以第一点为原点或使用简单墨卡托近似），实时绘制折线。支持自动缩放与居中、起点/终点线高亮、小范围平滑去抖。",
+      "outputs": [
+        "app/src/main/java/.../view/TrackView.kt",
+        "app/src/main/java/.../render/PathProjector.kt"
+      ],
+      "acceptance": "1 Hz 更新不掉帧；轨迹在手表屏幕上清晰可见；起终点线直观。"
+    },
+    {
+      "id": "UI3",
+      "title": "设置页（可选）",
+      "description": "提供设置项：采样间隔(ms)、速度触发阈值(m/s)、冷却时间(s)、自动暂停阈值(km/h)、导出格式(GPX/CSV/两者)、单位(km/h, mph)、震动开关。",
+      "outputs": [
+        "app/src/main/res/xml/prefs.xml",
+        "app/src/main/java/.../SettingsActivity.kt"
+      ],
+      "acceptance": "设置项可持久化生效；默认值合理；切换后新会话立即应用。"
+    }
+  ]
+}
