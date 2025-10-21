@@ -19,6 +19,7 @@
 成功后 APK 位置：
 
 - `app/build/outputs/apk/debug/app-debug.apk`
+- `Releases/KartLapSE-v1.0-debug.apk`（构建完成后会自动复制到仓库根目录下的 Releases/ 目录）
 
 若需要 Release 构建，请在 `app/build.gradle.kts` 配置签名后执行：
 

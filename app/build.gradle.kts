@@ -51,3 +51,34 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }
+
+// Copy compiled APKs into the root-level Releases directory after build
+val releasesDir = rootProject.layout.projectDirectory.dir("Releases").asFile
+val appVersionName = android.defaultConfig.versionName ?: "unspecified"
+
+// Debug APK -> Releases
+tasks.register<org.gradle.api.tasks.Copy>("copyDebugApkToReleases") {
+    dependsOn("assembleDebug")
+    from(layout.buildDirectory.dir("outputs/apk/debug"))
+    include("*.apk")
+    into(releasesDir)
+    // Rename to include app name, version and build type
+    rename { _ -> "KartLapSE-v${appVersionName}-debug.apk" }
+}
+
+tasks.named("assembleDebug").configure {
+    finalizedBy("copyDebugApkToReleases")
+}
+
+// Release APK -> Releases (if you have signing configured)
+tasks.register<org.gradle.api.tasks.Copy>("copyReleaseApkToReleases") {
+    dependsOn("assembleRelease")
+    from(layout.buildDirectory.dir("outputs/apk/release"))
+    include("*.apk")
+    into(releasesDir)
+    rename { _ -> "KartLapSE-v${appVersionName}-release.apk" }
+}
+
+tasks.named("assembleRelease").configure {
+    finalizedBy("copyReleaseApkToReleases")
+}
