@@ -1,0 +1,30 @@
+# Android/Gradle ignores
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/**/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+**/*.apk
+**/*.ap_ 
+**/*.dex
+**/*.class
+
+# Keystores
+**/*.jks
+**/*.keystore
+
+# Logs
+*.log
+
+# Generated files
+app/release/
+app/debug/
+
+# Gradle wrapper caches
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
