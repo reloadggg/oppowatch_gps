@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">KartLap SE</string>
+    <string name="action_start">开始</string>
+    <string name="action_stop">结束</string>
+    <string name="action_save">保存</string>
+    <string name="status_idle">待机</string>
+    <string name="status_recording">记录中</string>
+    <string name="status_saving">保存中</string>
+    <string name="notification_channel_name">KartLap 记录</string>
+    <string name="notification_channel_description">离线圈速记录状态</string>
+    <string name="notification_title">KartLap SE 记录</string>
+    <string name="notification_ticker">KartLap 记录中</string>
+    <string name="notification_action_stop">停止</string>
+    <string name="notification_action_resume">恢复</string>
+    <string name="battery_prompt_title">后台运行权限</string>
+    <string name="battery_prompt_message">为了确保熄屏时持续记录，请授予电池优化豁免，并根据手表系统提示设置后台运行权限。</string>
+    <string name="battery_prompt_button">前往设置</string>
+    <string name="settings_title">后台权限指引</string>
+    <string name="permissions_summary">请确认以下权限均已授予以保证稳定记录。</string>
+    <string name="export_success">文件已保存：%1$s</string>
+    <string name="export_failure">保存失败：%1$s</string>
+    <string name="main_stats_format">时长 %1$s | 圈数 %2$d | 最佳圈 %3$s</string>
+    <string name="start_recording">开始记录</string>
+    <string name="stop_recording">结束记录</string>
+    <string name="save_session">保存会话</string>
+    <string name="settings">设置</string>
+    <string name="request_permissions">权限引导</string>
+</resources>
